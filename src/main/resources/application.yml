@@ -1,0 +1,80 @@
+server:
+  port: 8888
+spring:
+  #应用名称，可选
+  application:
+    name: prevalence
+  #配置数据库读写分离
+  shardingsphere:
+    datasource:
+      names:
+        master,slave
+      # 主数据源
+      master:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        # url: jdbc:mysql://192.168.238.131:3306/prevalence?characterEncoding=utf-8&useSSL=false
+        url: jdbc:mysql://localhost:3307/prevalence?characterEncoding=utf-8&useSSL=false&allowMultiQueries=true
+        username: root
+        password:
+      # 从数据源
+      slave:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        # url: jdbc:mysql://192.168.238.130:3306/prevalence?characterEncoding=utf-8&useSSL=false
+        url: jdbc:mysql://localhost:3307/prevalence?characterEncoding=utf-8&useSSL=false&allowMultiQueries=true
+        username: root
+        password:
+    #         password: root
+    masterslave:
+      # 读写分离配置
+      load-balance-algorithm-type: round_robin
+      # 最终的数据源名称
+      name: dataSource
+      # 主库数据源名称
+      master-data-source-name: master
+      # 从库数据源名称列表，多个逗号分隔
+      slave-data-source-names: slave
+    props:
+      sql:
+        show: false #开启SQL显示，默认false
+  main:
+    allow-bean-definition-overriding: true
+    allow-circular-references: true
+
+
+    #Redis相关配置
+  redis:
+    #这是Linux中连接ID
+    #host: 192.168.238.131
+    #这是Windows的连接ID
+    host: localhost
+    port: 6379
+    password: 123456
+    database: 0
+    jedis:
+      #Redis连接池配置
+      pool:
+        max-active: 8 #最大连接数
+        max-wait: 1ms #连接池最大阻塞等待时间
+        max-idle: 4 #连接池中的最大空闲连接
+        min-idle: 0 #连接池中的最小空闲连接
+  cache:
+    redis:
+      time-to-live: 1800000  #设置过期时间
+
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/*.xml
+  configuration:
+    #在映射实体或者属性时，将数据库中表名和字段名中的下划线去掉，按照驼峰命名法映射
+    map-underscore-to-camel-case: true
+    #打印查询结果
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      id-type: ASSIGN_ID
+
+
+prevalence:
+  path: F:\image
+
